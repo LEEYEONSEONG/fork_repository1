@@ -18,11 +18,18 @@ export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTablePr
     fetchPostsByTag(tag)
   }
 
-  const highlightText = (text: string, keyword: string) => {
-    if (!keyword) return text
-    const regex = new RegExp(`(${keyword})`, "gi")
+  const highlightText = (text: string, highlight: string) => {
+    if (!text) return null
+    if (!highlight.trim()) {
+      return <span>{text}</span>
+    }
+    const regex = new RegExp(`(${highlight})`, "gi")
     const parts = text.split(regex)
-    return <>{parts.map((part, i) => (regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>))}</>
+    return (
+      <span>
+        {parts.map((part, i) => (regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>))}
+      </span>
+    )
   }
 
   const { searchQuery } = usePostStore()
