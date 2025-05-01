@@ -4,12 +4,12 @@ import { addComment, updateComment, deleteComment, likeComment } from "../api/ap
 import { Comment } from "../types"
 
 export const useAddCommentMutation = () => {
-  // const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: addComment,
-    // onSuccess: (data) => {
-    //   queryClient.invalidateQueries({ queryKey: ["comments", data.postId] })
-    // },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", data.postId] })
+    },
   })
 }
 
