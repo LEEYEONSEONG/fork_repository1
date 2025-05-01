@@ -3,8 +3,8 @@ import { Button, Textarea } from "../../../../shared/ui"
 
 interface CommentEditorFormProps {
   mode: "create" | "edit"
-  comment: Pick<Comment, "body" | "postId" | "user" | "likes">
-  onChange: (comment: Pick<Comment, "body" | "postId" | "user" | "likes">) => void
+  comment: Pick<Comment, "body" | "postId" | "likes"> & { userId: number }
+  onChange: (comment: CommentEditorFormProps["comment"]) => void
   onSubmit: () => void
 }
 

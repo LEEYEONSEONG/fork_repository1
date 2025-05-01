@@ -92,7 +92,6 @@ describe("PostsManager", () => {
       userId: 1,
       tags: [],
     }
-    console.log("1111")
 
     // POST 요청에 대한 핸들러 추가
     server.use(
@@ -108,7 +107,6 @@ describe("PostsManager", () => {
     )
 
     renderPostsManager()
-    console.log("2222")
 
     // 기존 게시물들이 로드될 때까지 대기
 

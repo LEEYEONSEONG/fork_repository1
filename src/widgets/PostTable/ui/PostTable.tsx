@@ -2,16 +2,22 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Button }
 import { ThumbsUp, ThumbsDown, MessageSquare, Edit2, Trash2 } from "lucide-react"
 import { usePostStore } from "../../../entities/post/model/postStore"
 import { Post } from "../../../entities/post/types"
+import { usePostsQuery } from "../../../entities/post/queries/usePostsQuery"
+import { useMemo } from "react"
+import { useDeletePostMutation } from "../../../entities/post/queries/usePostMutation"
 
 interface PostTableProps {
-  posts: Post[]
   onOpenDetail: (post: Post) => void
   onEdit: (post: Post) => void
-  onDelete: (postId: number) => void
+  onOpenUser: (post: Post) => void
 }
 
-export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTableProps) => {
-  const { selectedTag, setSelectedTag, searchQuery } = usePostStore()
+export const PostTable = ({ onOpenDetail, onEdit, onOpenUser }: PostTableProps) => {
+  const { skip, limit, selectedTag, setSelectedTag, searchQuery } = usePostStore()
+  const { mutate: deleteMutate } = useDeletePostMutation()
+
+  const { data, isLoading } = usePostsQuery({ skip, limit, search: searchQuery, tag: selectedTag })
+  const posts = useMemo(() => data?.posts || [], [data])
 
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag)
@@ -30,6 +36,8 @@ export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTablePr
       </span>
     )
   }
+
+  if (isLoading) return <div className="flex justify-center p-4">로딩 중...</div>
 
   return (
     <Table>
@@ -67,7 +75,7 @@ export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTablePr
               </div>
             </TableCell>
             <TableCell>
-              <div className="flex items-center space-x-2 cursor-pointer">
+              <div onClick={() => onOpenUser(post)} className="flex items-center space-x-2 cursor-pointer">
                 <img src={post.author?.image} alt={post.author?.username} className="w-8 h-8 rounded-full" />
                 <span>{post.author?.username}</span>
               </div>
@@ -88,7 +96,7 @@ export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTablePr
                 <Button variant="ghost" size="sm" onClick={() => onEdit(post)}>
                   <Edit2 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => onDelete(post.id)}>
+                <Button variant="ghost" size="sm" onClick={() => deleteMutate(post.id)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
