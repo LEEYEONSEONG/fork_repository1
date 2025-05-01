@@ -25,6 +25,7 @@ interface PostStoreState {
 
 export const usePostStore = create<PostStoreState>((set) => ({
   selectedPost: null,
+  total: 0,
   newPost: { title: "", body: "", userId: 1 },
   selectedTag: "",
   searchQuery: "",
