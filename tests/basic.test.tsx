@@ -111,13 +111,10 @@ describe("PostsManager", () => {
     // 기존 게시물들이 로드될 때까지 대기
 
     await waitFor(() => {
-      console.log("Rendered titles:")
       TEST_POSTS.posts.forEach((post) => {
-        console.log("post.title", post.title)
         expect(screen.getByText(post.title)).toBeInTheDocument()
       })
     })
-    console.log("3")
 
     const addButton = screen.getByRole("button", { name: /게시물 추가/i })
 
