@@ -4,13 +4,7 @@ import { Input } from "../../../../shared/ui"
 import { usePostStore } from "../../../../entities/post/model/postStore"
 
 export const SearchInput = () => {
-  const { searchQuery, setSearchQuery, fetchPostsBySearch } = usePostStore()
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      fetchPostsBySearch()
-    }
-  }
+  const { searchQuery, setSearchQuery } = usePostStore()
 
   return (
     <div className="relative w-full max-w-md">
@@ -20,7 +14,6 @@ export const SearchInput = () => {
         className="pl-8"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        onKeyPress={handleKeyPress}
       />
     </div>
   )

@@ -11,11 +11,10 @@ interface PostTableProps {
 }
 
 export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTableProps) => {
-  const { selectedTag, setSelectedTag, fetchPostsByTag } = usePostStore()
+  const { selectedTag, setSelectedTag, searchQuery } = usePostStore()
 
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag)
-    fetchPostsByTag(tag)
   }
 
   const highlightText = (text: string, highlight: string) => {
@@ -31,8 +30,6 @@ export const PostTable = ({ posts, onOpenDetail, onEdit, onDelete }: PostTablePr
       </span>
     )
   }
-
-  const { searchQuery } = usePostStore()
 
   return (
     <Table>

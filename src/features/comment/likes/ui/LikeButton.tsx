@@ -1,18 +1,19 @@
 import { ThumbsUp } from "lucide-react"
-import { useCommentStore } from "../../../../entities/comment/model/commentStore"
+
 import { Button } from "../../../../shared/ui"
+
+import { useLikeCommentMutation } from "../../../../entities/comment/queries/useCommentMutation"
 
 interface LikeButtonProps {
   commentId: number
-  postId: number
   count: number
 }
 
-export const LikeButton = ({ commentId, postId, count }: LikeButtonProps) => {
-  const { likeComment } = useCommentStore()
+export const LikeButton = ({ commentId, count }: LikeButtonProps) => {
+  const { mutate } = useLikeCommentMutation()
 
   const handleLike = () => {
-    likeComment(commentId, postId)
+    mutate({ id: commentId, likes: count })
   }
 
   return (

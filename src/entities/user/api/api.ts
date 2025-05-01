@@ -1,12 +1,15 @@
+import { axiosClient } from "../../../shared/api/client"
+
 import { User } from "../types"
 
 export async function fetchUserList(): Promise<User[]> {
-  const res = await fetch("/api/users?limit=0&select=username,image")
-  const data = await res.json()
+  const { data } = await axiosClient.get("/users", {
+    params: { limit: 0, select: "username,image" },
+  })
   return data.users
 }
 
 export async function fetchUserDetail(userId: number): Promise<User> {
-  const res = await fetch(`/api/users/${userId}`)
-  return await res.json()
+  const { data } = await axiosClient.get(`/users/${userId}`)
+  return data
 }

@@ -1,8 +1,9 @@
+import { axiosClient } from "../../../shared/api/client"
+
 import { Comment } from "../types"
 
 export async function fetchComments(postId: number): Promise<Comment[]> {
-  const res = await fetch(`/api/comments/post/${postId}`)
-  const data = await res.json()
+  const { data } = await axiosClient.get(`/api/comments/post/${postId}`)
   return data.comments
 }
 
@@ -12,35 +13,20 @@ export async function addComment(comment: {
   userId: number
   likes: number
 }): Promise<Comment> {
-  const res = await fetch("/api/comments/add", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(comment),
-  })
-  if (!res.ok) throw new Error("댓글 추가 실패")
-  return await res.json()
+  const { data } = await axiosClient.post("/api/comments/add", comment)
+  return data
 }
 
 export async function updateComment(id: number, body: string): Promise<Comment> {
-  const res = await fetch(`/api/comments/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ body }),
-  })
-  return await res.json()
+  const { data } = await axiosClient.put(`/api/comments/${id}`, { body })
+  return data
 }
 
 export async function deleteComment(id: number): Promise<void> {
-  await fetch(`/api/comments/${id}`, {
-    method: "DELETE",
-  })
+  await axiosClient.delete(`/api/comments/${id}`)
 }
 
 export async function likeComment(id: number, likes: number): Promise<Comment> {
-  const res = await fetch(`/api/comments/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ likes }),
-  })
-  return await res.json()
+  const { data } = await axiosClient.patch(`/api/comments/${id}`, { likes })
+  return data
 }

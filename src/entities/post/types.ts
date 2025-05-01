@@ -20,3 +20,10 @@ export interface Tag {
   name: string
   url: string
 }
+
+export interface UsePostsQueryParams {
+  skip: number
+  limit: number
+  search?: string
+  tag?: string
+}

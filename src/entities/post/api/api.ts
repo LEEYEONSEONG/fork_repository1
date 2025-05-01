@@ -1,12 +1,11 @@
+import { axiosClient } from "../../../shared/api/client"
+
 import { User } from "../../user/types"
 import { Post, Tag } from "../types"
 
 export async function fetchPosts(skip: number, limit: number): Promise<{ posts: Post[]; total: number }> {
-  const postRes = await fetch(`/api/posts?limit=${limit}&skip=${skip}`)
-  const postData = await postRes.json()
-
-  const userRes = await fetch("/api/users?limit=0&select=username,image")
-  const userData = await userRes.json()
+  const { data: postData } = await axiosClient.get(`/api/posts?limit=${limit}&skip=${skip}`)
+  const { data: userData } = await axiosClient.get("/api/users?limit=0&select=username,image")
 
   const postsWithAuthor = postData.posts.map((post: Post) => ({
     ...post,
@@ -17,11 +16,8 @@ export async function fetchPosts(skip: number, limit: number): Promise<{ posts: 
 }
 
 export async function fetchPostsByTag(tag: string): Promise<{ posts: Post[]; total: number }> {
-  const postRes = await fetch(`/api/posts/tag/${tag}`)
-  const postData = await postRes.json()
-
-  const userRes = await fetch("/api/users?limit=0&select=username,image")
-  const userData = await userRes.json()
+  const { data: postData } = await axiosClient.get(`/api/posts/tag/${tag}`)
+  const { data: userData } = await axiosClient.get("/api/users?limit=0&select=username,image")
 
   const postsWithAuthor = postData.posts.map((post: Post) => ({
     ...post,
@@ -32,41 +28,29 @@ export async function fetchPostsByTag(tag: string): Promise<{ posts: Post[]; tot
 }
 
 export async function fetchPostsBySearch(query: string): Promise<{ posts: Post[]; total: number }> {
-  const res = await fetch(`/api/posts/search?q=${query}`)
-  return await res.json()
+  const { data } = await axiosClient.get(`/api/posts/search?q=${query}`)
+  return data
 }
 
 export async function fetchTags(): Promise<Tag[]> {
-  const res = await fetch("/api/posts/tags")
-  return await res.json()
+  const { data } = await axiosClient.get("/api/posts/tags")
+  return data
 }
 
 export async function addPost(post: Omit<Post, "id">): Promise<Post> {
   const payload = {
     ...post,
-    userId: 1,
+    userId: 1, // 기본 유저 설정
   }
-
-  const res = await fetch("/api/posts/add", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  })
-
-  return await res.json()
+  const { data } = await axiosClient.post("/api/posts/add", payload)
+  return data
 }
 
 export async function updatePost(post: Post): Promise<Post> {
-  const res = await fetch(`/api/posts/${post.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(post),
-  })
-  return await res.json()
+  const { data } = await axiosClient.put(`/api/posts/${post.id}`, post)
+  return data
 }
 
 export async function deletePost(id: number): Promise<void> {
-  await fetch(`/api/posts/${id}`, {
-    method: "DELETE",
-  })
+  await axiosClient.delete(`/api/posts/${id}`)
 }

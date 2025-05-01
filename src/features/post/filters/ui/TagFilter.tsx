@@ -1,17 +1,13 @@
-import { useEffect } from "react"
 import { usePostStore } from "../../../../entities/post/model/postStore"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../shared/ui"
+import { useTagsQuery } from "../../../../entities/post/queries/usePostsQuery"
 
 export const TagFilter = () => {
-  const { tags, selectedTag, setSelectedTag, fetchTags, fetchPostsByTag } = usePostStore()
-
-  useEffect(() => {
-    fetchTags()
-  }, [fetchTags])
+  const { selectedTag, setSelectedTag } = usePostStore()
+  const { data: tags, isSuccess } = useTagsQuery()
 
   const handleChange = (value: string) => {
     setSelectedTag(value)
-    fetchPostsByTag(value)
   }
 
   return (
@@ -21,11 +17,12 @@ export const TagFilter = () => {
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">모든 태그</SelectItem>
-        {tags.map((tag) => (
-          <SelectItem key={tag.slug} value={tag.slug}>
-            {tag.name}
-          </SelectItem>
-        ))}
+        {isSuccess &&
+          tags.map((tag) => (
+            <SelectItem key={tag.slug} value={tag.slug}>
+              {tag.name}
+            </SelectItem>
+          ))}
       </SelectContent>
     </Select>
   )

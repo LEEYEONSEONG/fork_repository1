@@ -4,10 +4,11 @@ import userEvent from "@testing-library/user-event"
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 import { MemoryRouter } from "react-router-dom"
-import PostsManager from "../src/pages/PostsManagerPage"
+import PostsManager from "../src/pages/PostManagerPage/PostsManagerPage"
 import * as React from "react"
 import "@testing-library/jest-dom"
 import { TEST_POSTS, TEST_SEARCH_POST, TEST_USERS } from "./mockData"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 // MSW 서버 설정
 const server = setupServer(
@@ -43,11 +44,15 @@ beforeAll(() => server.listen({ onUnhandledRequest: "error" }))
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
+const queryClient = new QueryClient()
+
 // 테스트에 공통으로 사용될 render 함수
 const renderPostsManager = () => {
   return render(
     <MemoryRouter>
-      <PostsManager />
+      <QueryClientProvider client={queryClient}>
+        <PostsManager />
+      </QueryClientProvider>
     </MemoryRouter>,
   )
 }
@@ -87,6 +92,7 @@ describe("PostsManager", () => {
       userId: 1,
       tags: [],
     }
+    console.log("1111")
 
     // POST 요청에 대한 핸들러 추가
     server.use(
@@ -102,15 +108,21 @@ describe("PostsManager", () => {
     )
 
     renderPostsManager()
+    console.log("2222")
 
     // 기존 게시물들이 로드될 때까지 대기
+
     await waitFor(() => {
+      console.log("Rendered titles:")
       TEST_POSTS.posts.forEach((post) => {
+        console.log("post.title", post.title)
         expect(screen.getByText(post.title)).toBeInTheDocument()
       })
     })
+    console.log("3")
 
     const addButton = screen.getByRole("button", { name: /게시물 추가/i })
+
     await user.click(addButton)
 
     const titleInput = screen.getByPlaceholderText(/제목/i)
